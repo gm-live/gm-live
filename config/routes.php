@@ -14,12 +14,13 @@ use Hyperf\HttpServer\Router\Router;
 
 // 前台API
 Router::addGroup('/api',function (){
+	Router::post('/register', 'App\Controller\Api\UserController@register');
 	Router::post('/login', 'App\Controller\Api\UserController@login');
 });
 
 
 // 串流推向主機專用API
-Router::addGroup('/stream-api',function (){
-	Router::get('/check', 'App\Controller\Stream\StreamController@check');
+Router::addGroup('/streamer-api',function (){
+	Router::get('/check', 'App\Controller\Streamer\StreamController@check');
 });
 

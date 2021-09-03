@@ -18,6 +18,8 @@ use Psr\Container\ContainerInterface;
 
 abstract class AbstractController
 {
+    const STATUS_OK = 1;
+    
     /**
      * @Inject
      * @var ContainerInterface
@@ -35,4 +37,14 @@ abstract class AbstractController
      * @var ResponseInterface
      */
     protected $oResponse;
+
+
+    public function success($aData)
+    {
+        return [
+            'status' => self::STATUS_OK,
+            'msg' => 'success',
+            'data' => $aData,
+        ];
+    }
 }

@@ -1,19 +1,12 @@
 <?php
 
-declare(strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
+declare (strict_types = 1);
+
 namespace App\Exception\Handler;
 
+use App\Exception\ExceptionCode as ExCode;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
-use Hyperf\HttpMessage\Stream\SwooleStream;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
@@ -29,11 +22,31 @@ class AppExceptionHandler extends ExceptionHandler
         $this->logger = $logger;
     }
 
-    public function handle(Throwable $throwable, ResponseInterface $response)
+    public function handle(Throwable $oThrowable, ResponseInterface $oResponse)
     {
-        $this->logger->error(sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()));
-        $this->logger->error($throwable->getTraceAsString());
-        return $response->withHeader('Server', 'Hyperf')->withStatus(500)->withBody(new SwooleStream('Internal Server Error.'));
+        // log
+        $this->logger->error(sprintf('%s[%s] in %s', $oThrowable->getMessage(), $oThrowable->getLine(), $oThrowable->getFile()));
+        $this->logger->error($oThrowable->getTraceAsString());
+
+        // response
+        $iErrCode = $oThrowable->getCode();
+        $sMsg     = $oThrowable->getMessage();
+
+        $oHyperfResponse = new \Hyperf\HttpServer\Response($oResponse);
+
+        if (isset(ExCode::EX_MSGS[$iErrCode])) {
+            return $oHyperfResponse->json([
+                'status' => $iErrCode,
+                'msg'    => $sMsg ?? ExCode::EX_MSGS[$iErrCode],
+                'data'   => [],
+            ]);
+        } else {
+            return $oHyperfResponse->json([
+                'status' => ExCode::SYSTEM_OTHER_ERROR,
+                'msg'    => ExCode::EX_MSGS[ExCode::SYSTEM_OTHER_ERROR],
+                'data'   => [],
+            ]);
+        }
     }
 
     public function isValid(Throwable $throwable): bool

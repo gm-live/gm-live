@@ -4,22 +4,42 @@ declare (strict_types = 1);
 namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
-use Hyperf\HttpServer\Contract\ResponseInterface;
+use App\Services\Api\UserService;
 use Hyperf\Logger\LoggerFactory;
-use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
+use App\Validators\UserValidator;
+use Hyperf\Di\Annotation\Inject;
 
 class UserController extends AbstractController
 {
-	protected $logger;
 
-    public function __construct(LoggerFactory $loggerFactory)
+	/**
+	 * @Inject
+	 * @var UserValidator
+	 */
+	protected $oUserValidator;
+
+	/**
+	 * @Inject
+	 * @var UserService
+	 */
+	protected $oUserService;
+
+	public function register()
     {
-        $this->logger = $loggerFactory->get();
+    	$this->oUserValidator->userRegisterCheck($this->oRequest->all());
+    	$sUsername = $this->oRequest->input('username');
+    	$sPasssword = $this->oRequest->input('password');
+    	$sToken = $this->oUserService->register($sUsername, $sPasssword);
+   		return $this->success(['token' => $sToken]);
     }
 
     public function login()
     {
-    	return 123;
+    	$this->oUserValidator->userLoginCheck($this->oRequest->all());
+    	$sUsername = $this->oRequest->input('username');
+    	$sPasssword = $this->oRequest->input('password');
+    	$sToken = $this->oUserService->login($sUsername, $sPasssword);
+   		return $this->success(['token' => $sToken]);
     }
 
 }

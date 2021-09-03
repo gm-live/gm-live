@@ -1,7 +1,7 @@
 <?php
 declare (strict_types = 1);
 
-namespace App\Controller\Stream;
+namespace App\Controller\Streamer;
 
 use App\Controller\AbstractController;
 use Hyperf\HttpServer\Contract\ResponseInterface;

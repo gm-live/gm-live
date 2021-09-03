@@ -21,6 +21,7 @@ return [
             'type' => Server::SERVER_HTTP,
             'host' => '0.0.0.0',
             'port' => (int)env('SERVER_PORT', 9501),
+            'open_http2_protocol' => true, // 啟用 HTTP2 協議解析
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
                 Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
