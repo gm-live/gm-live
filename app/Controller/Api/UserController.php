@@ -42,4 +42,9 @@ class UserController extends AbstractController
    		return $this->success(['token' => $sToken]);
     }
 
+    public function info()
+    {
+        return $this->success();
+    }
+
 }

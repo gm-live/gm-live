@@ -39,7 +39,7 @@ abstract class AbstractController
     protected $oResponse;
 
 
-    public function success($aData)
+    public function success($aData = [])
     {
         return [
             'status' => self::STATUS_OK,
