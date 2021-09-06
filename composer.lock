@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "21deaca51a647047282025690d646218",
+    "content-hash": "cf297c89ae769b3f4d3de89dcdfe667c",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2626,6 +2626,64 @@
                 "source": "https://github.com/hyperf/validation/tree/v2.2.6"
             },
             "time": "2021-08-23T07:38:19+00:00"
+        },
+        {
+            "name": "hyperf/websocket-server",
+            "version": "v2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/websocket-server.git",
+                "reference": "ba070a8e06732dbc4227c4203fe9120d32ef5dfe"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/websocket-server/zipball/ba070a8e06732dbc4227c4203fe9120d32ef5dfe",
+                "reference": "ba070a8e06732dbc4227c4203fe9120d32ef5dfe",
+                "shasum": ""
+            },
+            "require": {
+                "hyperf/contract": "~2.2.0",
+                "hyperf/exception-handler": "~2.2.0",
+                "hyperf/http-server": "~2.2.0",
+                "hyperf/utils": "~2.2.0",
+                "php": ">=7.2",
+                "psr/container": "^1.0|^2.0",
+                "psr/event-dispatcher": "^1.0",
+                "psr/log": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.2-dev"
+                },
+                "hyperf": {
+                    "config": "Hyperf\\WebSocketServer\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hyperf\\WebSocketServer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A websocket server library for Hyperf.",
+            "homepage": "https://hyperf.io",
+            "keywords": [
+                "hyperf",
+                "php",
+                "swoole",
+                "websocket"
+            ],
+            "support": {
+                "docs": "https://hyperf.wiki",
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
+            },
+            "time": "2021-07-18T06:50:14+00:00"
         },
         {
             "name": "laminas/laminas-mime",

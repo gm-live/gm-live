@@ -21,6 +21,11 @@ class UserRepo extends BaseRepo
 		return $this->oUser->where('username', $sUsername)->first();
 	}
 
+	public function findById($iId)
+	{
+		return $this->oUser->where('id', $iId)->first();
+	}
+
 	public function create($sUsername, $sPassword): User
 	{
 		$oUser = new $this->oUser();

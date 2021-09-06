@@ -13,6 +13,7 @@ class ExceptionCode
     const USER_CREATE_ERROR                     = 1003; // 用戶建立失敗
     const USER_USERNAME_REPEAT_ERROR            = 1004; // 用戶名重複
     const USER_TOKEN_ERROR                      = 1005; // token 無效
+    const USER_NOT_FOUND_ERROR                  = 1006; // 無此用戶
 
     const EX_MSGS = [
         self::SYSTEM_OTHER_ERROR                    => '未知錯誤',
@@ -20,7 +21,8 @@ class ExceptionCode
         self::USER_LOGIN_USERNAME_OR_PASSWORD_ERROR => '用戶名或密碼錯誤',
         self::USER_CREATE_ERROR                     => '用戶建立失敗',
         self::USER_USERNAME_REPEAT_ERROR            => '用戶名重複',
-        self::USER_TOKEN_ERROR            => 'token 無效',
+        self::USER_TOKEN_ERROR                      => 'token 無效',
+        self::USER_NOT_FOUND_ERROR                  => '無此用戶',
     ];
 
     public static function fire($iCode, $sMsg = null)

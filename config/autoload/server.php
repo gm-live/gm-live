@@ -1,14 +1,7 @@
 <?php
 
 declare(strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://hyperf.wiki
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
+
 use Hyperf\Server\Event;
 use Hyperf\Server\Server;
 use Swoole\Constant;
@@ -20,17 +13,28 @@ return [
             'name' => 'http',
             'type' => Server::SERVER_HTTP,
             'host' => '0.0.0.0',
-            'port' => (int)env('SERVER_PORT', 9501),
-            'open_http2_protocol' => true, // 啟用 HTTP2 協議解析
+            'port' => (int)env('HTTP_SERVER_PORT', 9501),
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
                 Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
             ],
         ],
+        [
+            'name' => 'ws',
+            'type' => Server::SERVER_WEBSOCKET,
+            'host' => '0.0.0.0',
+            'port' => (int)env('WEBSOCKET_SERVER_PORT', 9502),
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
+                Event::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
+                Event::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+            ],
+        ],
     ],
     'settings' => [
         Constant::OPTION_ENABLE_COROUTINE => true,
-        Constant::OPTION_WORKER_NUM => swoole_cpu_num(),
+        Constant::OPTION_WORKER_NUM => swoole_cpu_num() * 2,
         Constant::OPTION_PID_FILE => BASE_PATH . '/runtime/hyperf.pid',
         Constant::OPTION_OPEN_TCP_NODELAY => true,
         Constant::OPTION_MAX_COROUTINE => 100000,

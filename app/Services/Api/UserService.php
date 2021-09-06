@@ -9,8 +9,7 @@ use App\Repositories\UserRepo;
 use Hyperf\Redis\Redis;
 use App\Exception\ExceptionCode as ExCode;
 
-
-class UserService
+class UserService extends BaseApiService
 {
 
 	/**
@@ -61,19 +60,6 @@ class UserService
    		return $sToken;
     }
 
-    public function checkTokenOrFail($sToken)
-    {
-        if (! $this->checkToken($sToken)) {
-            ExCode::fire(ExCode::USER_TOKEN_ERROR);
-        }
-    }
-
-    public function checkToken($sToken)
-    {
-        $sTokenKey = $this->getRedisTokenKey($sToken);
-        return $this->oRedis->exists($sTokenKey);
-    }
-
     public function getPasswordHash($sUsername, $sPasssword)
     {
         return hash('sha512', $sUsername . $sPasssword . md5($sPasssword));
@@ -83,7 +69,6 @@ class UserService
     {
         return hash('sha512', $oUser->id . $oUser->username . md5((string)microtime(true)));
     }
-
 
     public function setToken($sToken, $iUserId)
     {
@@ -101,11 +86,6 @@ class UserService
             $this->oRedis->del($sToken);
             $this->oRedis->del($sUserIdTokenKey);
         }
-    }
-
-    public function getRedisTokenKey($sToken)
-    {
-        return sprintf(config('user.token_key'), $sToken);
     }
 
     public function getRedisUserIdTokenKey($iUserId)

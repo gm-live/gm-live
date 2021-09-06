@@ -34,3 +34,13 @@ Router::addGroup('/streamer-api',function (){
 	Router::get('/check', 'App\Controller\Streamer\StreamController@check');
 });
 
+
+// websocket
+Router::addServer('ws', function () {
+    Router::get('/', 'App\Controller\Websocket\ChatRoomController', [
+		'middleware' => [
+			UserAuthMiddleware::class, 
+		],
+	]);
+});
+
