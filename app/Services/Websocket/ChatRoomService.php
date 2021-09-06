@@ -36,7 +36,8 @@ class ChatRoomService extends BaseWebsocketService
         $this->joinRoomByFd($iFd, $iUserId, $iRoomId);
 
         // 推送歡迎通知
-        $aMsg = $this->makeMsgFrame($oUser->username . ' joined room!');
+        $sMsg = $oUser->username . ' joined room!';
+        $aMsg = $this->makeMsg($iRoomId, $sMsg);
         $this->pushAllMsgByRoomId($oServer, $iRoomId, $aMsg);
     }
 
@@ -52,7 +53,7 @@ class ChatRoomService extends BaseWebsocketService
             ExCode::fire(ExCode::USER_NOT_FOUND_ERROR);
         }
 
-        $aMsg = $this->makeMsgFrame($oUser->username . ' leaved room!');
+        $aMsg = $this->makeMsg($iRoomId, $oUser->username . ' leaved room!');
         foreach ($aRoomIds as $iRoomId => $_) {
 
             // 離開房間
@@ -80,14 +81,23 @@ class ChatRoomService extends BaseWebsocketService
         $this->leaveRoomByFd($iFd, $iUserId, $iRoomId);
 
         // 發出離開訊息
-        $aMsg = $this->makeMsgFrame($oUser->username . ' leaved room!');
+        $sMsg = $oUser->username . ' leaved room!';
+        $aMsg = $this->makeMsg($iRoomId, $sMsg);
         $this->pushAllMsgByRoomId($oServer, $iRoomId, $aMsg);
 
     }
 
-    public function handleMsg($oServer, $iFd, $jData)
+    public function handleMsg($oServer, $iFd, $aData)
     {
+        $iRoomId  = $aData['room_id'];
+        $iMsgType = $aData['msg_type'];
+        $sMsg     = $aData['msg'];
+
+        // TODO 持久化
         
+        // 推送
+        $aMsg = $this->makeMsg($iRoomId, $sMsg);
+        $this->pushAllMsgByRoomId($oServer, $iRoomId, $aMsg);
     }
 
 }

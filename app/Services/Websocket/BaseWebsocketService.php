@@ -5,13 +5,14 @@ namespace App\Services\Websocket;
 
 use App\Services\BaseService;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\Redis\Redis;
 
 class BaseWebsocketService extends BaseService
 {
     const WEBSOCKET_STATUS_OK = 1;
 
 	// 推送功能類型
-	const MSG_TYPE_NORMAL = 1;  // 一般聊天文字
+    const MSG_TYPE_NORMAL = 1;  // 一般聊天文字
 
 	/**
      * @Inject
@@ -76,11 +77,12 @@ class BaseWebsocketService extends BaseService
         }
     }
 
-    public function makeMsgFrame($sMsg = '', $iMsgType = self::MSG_TYPE_NORMAL, $iStatus = self::WEBSOCKET_STATUS_OK)
+    public function makeMsg($iRoomId, $sMsg = '', $iMsgType = self::MSG_TYPE_NORMAL, $iStatus = self::WEBSOCKET_STATUS_OK)
     {
     	return [
             'status' => $iStatus,
-    		'type' => $iMsgType,
+            'room_id' => $iRoomId,
+    		'msg_type' => $iMsgType,
     		'msg' => $sMsg,
     	];
     }

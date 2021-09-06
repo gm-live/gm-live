@@ -12,6 +12,10 @@ use Swoole\Websocket\Frame;
 use Swoole\WebSocket\Server as WebSocketServer;
 use Hyperf\Di\Annotation\Inject;
 use App\Services\Websocket\ChatRoomService;
+use Throwable;
+use App\Exception\ExceptionCode as ExCode;
+use App\Validators\WebsocketValidator;
+
 
 class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
@@ -22,6 +26,12 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
      */
     protected $oChatRoomService;
 
+    /**
+     * @Inject
+     * @var WebsocketValidator
+     */
+    protected $oWebsocketValidator;
+
     public function onOpen($oServer, Request $oRequest): void
     {
         $sToken = $oRequest->header['token'];
@@ -31,9 +41,24 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
 
     public function onMessage($oServer, Frame $oFrame): void
     {
-        $iFd = $frame->fd;
-        $aData = $oFrame->data;
-        $this->oChatRoomService->handleMsg($oServer, $iFd, $aData);
+        try {
+            
+            $iFd = $oFrame->fd;
+            $jData = $oFrame->data;
+
+            // 驗證格式
+            $aData = json_decode($jData, true) ?? [];
+            $this->oWebsocketValidator->msgDataCheck($aData);
+            $this->oChatRoomService->handleMsg($oServer, $iFd, $aData);
+
+        } catch (Throwable $e) {
+            $aMsgData = $this->oChatRoomService->makeMsg(
+                $e->getMessage(), 
+                $this->oChatRoomService::MSG_TYPE_NORMAL, 
+                $e->getCode()
+            );
+            $oServer->push((int)$iFd, json_encode($aMsgData, JSON_UNESCAPED_UNICODE));
+        }
     }
 
     public function onClose($oServer, int $iFd, int $reactorId): void
