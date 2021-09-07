@@ -1,6 +1,10 @@
 <?php
 
 declare(strict_types=1);
+
+use App\Middleware\CorsMiddleware; // 跨域
+
+
 /**
  * This file is part of Hyperf.
  *
@@ -11,5 +15,6 @@ declare(strict_types=1);
  */
 return [
     'http' => [
+		CorsMiddleware::class,  
     ],
 ];
