@@ -6,6 +6,8 @@ namespace App\Services\Websocket;
 use App\Services\BaseService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Redis\Redis;
+use App\Repositories\UserRepo;
+use App\Exception\ExceptionCode as ExCode;
 
 class BaseWebsocketService extends BaseService
 {
@@ -13,12 +15,19 @@ class BaseWebsocketService extends BaseService
 
 	// 推送功能類型
     const MSG_TYPE_NORMAL = 1;  // 一般聊天文字
+    const MSG_TYPE_SYSTEM = 2;  // 系統訊息文字
 
 	/**
      * @Inject
      * @var Redis
      */
     protected $oRedis;
+
+    /**
+     * @Inject
+     * @var UserRepo
+     */
+    protected $oUserRepo;
 
     public function getRoomKey($iRoomId)
     {
@@ -77,12 +86,19 @@ class BaseWebsocketService extends BaseService
         }
     }
 
-    public function makeMsg($iRoomId, $sMsg = '', $iMsgType = self::MSG_TYPE_NORMAL, $iStatus = self::WEBSOCKET_STATUS_OK)
-    {
+    public function makeMsg(
+        $iRoomId, 
+        $sMsg = '', 
+        $oUser = null,
+        $iMsgType = self::MSG_TYPE_NORMAL, 
+        $iStatus = self::WEBSOCKET_STATUS_OK
+    ) {
     	return [
             'status' => $iStatus,
             'room_id' => $iRoomId,
     		'msg_type' => $iMsgType,
+            'user_id' => $oUser->id ?? '',
+            'username' => $oUser->username ?? '',
     		'msg' => $sMsg,
     	];
     }
@@ -97,6 +113,18 @@ class BaseWebsocketService extends BaseService
     {
     	$sFdKey = $this->getFdUserMapKey();
     	return $this->oRedis->hget($sFdKey, (string)$iFd);
+    }
+
+    public function getUserOrFailByFd($iFd)
+    {
+        $iUserId = $this->getUserIdByFd($iFd);
+        $oUser = $this->oUserRepo->findById($iUserId);
+
+        if (! $oUser) {
+            ExCode::fire(ExCode::USER_NOT_FOUND_ERROR);
+        }
+
+        return $oUser;
     }
 
 

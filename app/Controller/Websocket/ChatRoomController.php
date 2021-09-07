@@ -49,12 +49,16 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
             // 驗證格式
             $aData = json_decode($jData, true) ?? [];
             $this->oWebsocketValidator->msgDataCheck($aData);
+            $iRoomId  = $aData['room_id'];
+
             $this->oChatRoomService->handleMsg($oServer, $iFd, $aData);
 
         } catch (Throwable $e) {
             $aMsgData = $this->oChatRoomService->makeMsg(
+                $iRoomId,
                 $e->getMessage(), 
-                $this->oChatRoomService::MSG_TYPE_NORMAL, 
+                null,
+                $this->oChatRoomService::MSG_TYPE_SYSTEM, 
                 $e->getCode()
             );
             $oServer->push((int)$iFd, json_encode($aMsgData, JSON_UNESCAPED_UNICODE));

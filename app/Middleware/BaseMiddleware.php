@@ -19,7 +19,7 @@ class BaseMiddleware implements MiddlewareInterface
      * @Inject
      * @var ContainerInterface
      */
-    protected $container;
+    protected $oContainer;
 
     /**
      * @Inject
