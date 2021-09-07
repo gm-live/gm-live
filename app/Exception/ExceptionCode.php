@@ -14,6 +14,7 @@ class ExceptionCode
     const USER_USERNAME_REPEAT_ERROR            = 1004; // 用戶名重複
     const USER_TOKEN_ERROR                      = 1005; // token 無效
     const USER_NOT_FOUND_ERROR                  = 1006; // 無此用戶
+    const USER_REGISTER_PARAMTER_ERROR          = 1007; // 註冊參數錯誤
 
 
     const WEBSOCKET_DATA_FORMAT_ERROR = 2001; // socket 資料格式錯誤
@@ -27,6 +28,7 @@ class ExceptionCode
         self::USER_TOKEN_ERROR                      => 'token 無效',
         self::USER_NOT_FOUND_ERROR                  => '無此用戶',
         self::WEBSOCKET_DATA_FORMAT_ERROR           => '資料格式錯誤',
+        self::USER_REGISTER_PARAMTER_ERROR          => '註冊參數錯誤',
     ];
 
     public static function fire($iCode, $sMsg = null)

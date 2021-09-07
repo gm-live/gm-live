@@ -25,7 +25,7 @@ class UserValidator extends AbstractValidator
 
         if ($oValidator->fails()){
             $sErrorMsg = $oValidator->errors()->first();  
-            ExCode::fire(ExCode::USER_LOGIN_PARAMATER_ERROR);
+            ExCode::fire(ExCode::USER_REGISTER_PARAMTER_ERROR);
         }
     }
 
