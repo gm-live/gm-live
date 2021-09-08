@@ -83,7 +83,7 @@ class ChatRoomService extends BaseWebsocketService
 
     public function pushLastMsgs($oServer, $iFd, $iRoomId)
     {
-        
+         // TODO 推歷史資料   
     }
 
 }
