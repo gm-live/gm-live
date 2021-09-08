@@ -81,4 +81,9 @@ class ChatRoomService extends BaseWebsocketService
         $this->pushAllMsgByRoomId($oServer, $iRoomId, $aMsg);
     }
 
+    public function pushLastMsgs($oServer, $iFd, $iRoomId)
+    {
+        
+    }
+
 }

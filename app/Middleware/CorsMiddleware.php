@@ -18,7 +18,7 @@ class CorsMiddleware extends BaseMiddleware
         $oResponse = $oResponse->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Credentials', 'true')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            ->withHeader('Access-Control-Allow-Headers', 'DNT,Keep-Alive,User-Agent,Cache-Control,Content-Type,Authorization');
+            ->withHeader('Access-Control-Allow-Headers', 'DNT,Keep-Alive,User-Agent,Cache-Control,Content-Type,Authorization,token');
 
         Context::set(ResponseInterface::class, $oResponse);
         if ($oRequest->getMethod() == 'OPTIONS') {

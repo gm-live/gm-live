@@ -34,9 +34,15 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
 
     public function onOpen($oServer, Request $oRequest): void
     {
+        $iFd = $oRequest->fd;
         $sToken = $oRequest->header['token'];
-        $iRoomId = $oRequest->get['room_id'] ?? 1;  // 預設1號房間 
-        $this->oChatRoomService->joinRoom($oServer, $sToken, $oRequest->fd, $iRoomId);
+        $iRoomId = $oRequest->get['room_id'] ?? 1;  // 預設1號房間
+
+        // 加入房間
+        $this->oChatRoomService->joinRoom($oServer, $sToken, $iFd, $iRoomId);
+
+        // 推房間歷史最新的幾條數據
+        $this->oChatRoomService->pushLastMsgs($oServer, $iFd, $iRoomId);
     }
 
     public function onMessage($oServer, Frame $oFrame): void
@@ -48,20 +54,22 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
 
             // 驗證格式
             $aData = json_decode($jData, true) ?? [];
+            $iRoomId = $aData['room_id'] ?? null;
             $this->oWebsocketValidator->msgDataCheck($aData);
-            $iRoomId  = $aData['room_id'];
-
             $this->oChatRoomService->handleMsg($oServer, $iFd, $aData);
 
         } catch (Throwable $e) {
-            $aMsgData = $this->oChatRoomService->makeMsg(
-                $iRoomId,
-                $e->getMessage(), 
-                null,
-                $this->oChatRoomService::MSG_TYPE_SYSTEM, 
-                $e->getCode()
-            );
-            $oServer->push((int)$iFd, json_encode($aMsgData, JSON_UNESCAPED_UNICODE));
+
+            if ($iRoomId) {
+                $aMsgData = $this->oChatRoomService->makeMsg(
+                    $iRoomId,
+                    $e->getMessage(), 
+                    null,
+                    $this->oChatRoomService::MSG_TYPE_SYSTEM, 
+                    $e->getCode()
+                );
+                $oServer->push((int)$iFd, json_encode($aMsgData, JSON_UNESCAPED_UNICODE));
+            }
         }
     }
 
