@@ -5,7 +5,6 @@ namespace App\Services\Websocket;
 
 use App\Services\BaseService;
 use Hyperf\Di\Annotation\Inject;
-use Hyperf\Redis\Redis;
 use App\Repositories\UserRepo;
 use App\Exception\ExceptionCode as ExCode;
 
@@ -17,12 +16,6 @@ class BaseWebsocketService extends BaseService
     const MSG_TYPE_NORMAL = 1;  // 一般聊天文字
     const MSG_TYPE_SYSTEM = 2;  // 系統訊息文字
 
-	/**
-     * @Inject
-     * @var Redis
-     */
-    protected $oRedis;
-
     /**
      * @Inject
      * @var UserRepo
@@ -32,11 +25,6 @@ class BaseWebsocketService extends BaseService
     public function getRoomKey($iRoomId)
     {
         return sprintf(config('chatRoom.room_key'), $iRoomId);
-    }
-
-    public function getFdUserMapKey()
-    {
-        return config('chatRoom.fd_user_id_map_key');
     }
 
     public function getFdRoomKey($iFd)
@@ -107,12 +95,6 @@ class BaseWebsocketService extends BaseService
     {
     	$sFdRoomKey = $this->getFdRoomKey($iFd);
     	return $this->oRedis->hgetall($sFdRoomKey);
-    }
-
-    public function getUserIdByFd($iFd)
-    {
-    	$sFdKey = $this->getFdUserMapKey();
-    	return $this->oRedis->hget($sFdKey, (string)$iFd);
     }
 
     public function getUserOrFailByFd($iFd)

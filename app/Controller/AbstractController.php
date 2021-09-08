@@ -15,6 +15,7 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Container\ContainerInterface;
+use App\Services\Api\UserService;
 
 abstract class AbstractController
 {
@@ -38,6 +39,12 @@ abstract class AbstractController
      */
     protected $oResponse;
 
+    /**
+     * @Inject
+     * @var UserService
+     */
+    protected $oUserService;
+
 
     public function success($aData = [])
     {
@@ -46,5 +53,11 @@ abstract class AbstractController
             'msg' => 'success',
             'data' => $aData,
         ];
+    }
+
+    public function getUserId()
+    {
+        $sToken = $this->oRequest->header('token');
+        return $this->oUserService->getUserIdByToken($sToken);
     }
 }

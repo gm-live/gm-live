@@ -4,7 +4,6 @@ declare (strict_types = 1);
 namespace App\Controller\Api;
 
 use App\Controller\AbstractController;
-use App\Services\Api\UserService;
 use Hyperf\Logger\LoggerFactory;
 use App\Validators\UserValidator;
 use Hyperf\Di\Annotation\Inject;
@@ -17,12 +16,6 @@ class UserController extends AbstractController
 	 * @var UserValidator
 	 */
 	protected $oUserValidator;
-
-	/**
-	 * @Inject
-	 * @var UserService
-	 */
-	protected $oUserService;
 
 	public function register()
     {
@@ -41,6 +34,14 @@ class UserController extends AbstractController
     	$sToken = $this->oUserService->login($sUsername, $sPasssword);
    		return $this->success(['token' => $sToken]);
     }
+
+    public function updateToken()
+    {
+        $iUserId = $this->getUserId();
+        $sToken = $this->oUserService->updateToken($iUserId);
+        return $this->success(['token' => $sToken]);
+    }
+
 
     public function info()
     {

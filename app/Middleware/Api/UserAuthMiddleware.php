@@ -23,6 +23,10 @@ class UserAuthMiddleware extends BaseMiddleware
     {
         $sToken = $this->oRequest->header('token', null);
         $this->oUserService->checkTokenOrFail($sToken);
+
+        // 驗證成功 增加token時效
+        $this->oUserService->addTokenExpireTime($sToken);
+
         return $handler->handle($request);
     }
 }

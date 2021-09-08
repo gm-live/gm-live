@@ -15,6 +15,7 @@ use App\Services\Websocket\ChatRoomService;
 use Throwable;
 use App\Exception\ExceptionCode as ExCode;
 use App\Validators\WebsocketValidator;
+use App\Services\Api\UserService;
 
 
 class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
@@ -32,6 +33,12 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
      */
     protected $oWebsocketValidator;
 
+    /**
+     * @Inject
+     * @var UserService
+     */
+    protected $oUserService;
+
     public function onOpen($oServer, Request $oRequest): void
     {
         $iFd = $oRequest->fd;
@@ -48,9 +55,12 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
     public function onMessage($oServer, Frame $oFrame): void
     {
         try {
-            
+
             $iFd = $oFrame->fd;
             $jData = $oFrame->data;
+
+            // 延長token時間
+            $this->oUserService->addTokenExpireTimeByFd($iFd);
 
             // 驗證格式
             $aData = json_decode($jData, true) ?? [];
