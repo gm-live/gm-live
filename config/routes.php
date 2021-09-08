@@ -17,10 +17,18 @@ Router::addGroup('/api',function () {
 
 	// 需登入
 	Router::addGroup('', function () {
+
+		// 用戶
 		Router::addGroup('/user', function () {
 			Router::get('/info', 'App\Controller\Api\UserController@info');
 			Router::post('/refresh-token', 'App\Controller\Api\UserController@refreshToken');
 		});
+
+		// 影片
+		Router::addGroup('/video', function () {
+			Router::get('', 'App\Controller\Api\VideoController@getVideo');
+		});
+
 	}, 
 	[
 		'middleware' => [
