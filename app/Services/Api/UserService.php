@@ -12,19 +12,17 @@ use App\Exception\ExceptionCode as ExCode;
 class UserService extends BaseApiService
 {
 
-	/**
-	 * @Inject
-	 * @var UserRepo
-	 */
-	protected $oUserRepo;
-
+    /**
+     * @Inject
+     * @var UserRepo
+     */
+    protected $oUserRepo;
 
     /**
      * @Inject
      * @var Redis
      */
     protected $oRedis;
-
 
     public function register($sUsername, $sPasssword)
     {
@@ -34,16 +32,16 @@ class UserService extends BaseApiService
         }
 
         $sHashPwd = $this->makePasswordHash($sUsername, $sPasssword);
-        $oUser = $this->oUserRepo->create($sUsername, $sHashPwd);
-        $sToken = $this->makeToken($oUser);
+        $oUser    = $this->oUserRepo->create($sUsername, $sHashPwd);
+        $sToken   = $this->makeToken($oUser);
         $this->setToken($sToken, $oUser->id);
         return $sToken;
     }
 
     public function login($sUsername, $sPasssword)
     {
-    	$oUser = $this->oUserRepo->findByUsername($sUsername);
-        if (! $oUser) {
+        $oUser = $this->oUserRepo->findByUsername($sUsername);
+        if (!$oUser) {
             ExCode::fire(ExCode::USER_LOGIN_USERNAME_OR_PASSWORD_ERROR);
         }
 
@@ -57,7 +55,7 @@ class UserService extends BaseApiService
         $this->flushToken($oUser->id);
         $this->setToken($sToken, $oUser->id);
 
-   		return $sToken;
+        return $sToken;
     }
 
     public function makePasswordHash($sUsername, $sPasssword)
@@ -67,12 +65,12 @@ class UserService extends BaseApiService
 
     public function makeToken($oUser)
     {
-        return hash('sha512', $oUser->id . $oUser->username . md5((string)microtime(true)));
+        return hash('sha512', $oUser->id . $oUser->username . md5((string) microtime(true)));
     }
 
     public function setToken($sToken, $iUserId)
     {
-        $sTokenKey = $this->getRedisTokenKey($sToken);
+        $sTokenKey       = $this->getRedisTokenKey($sToken);
         $sUserIdTokenKey = $this->getRedisUserIdTokenKey($iUserId);
         $this->oRedis->setex($sTokenKey, config('user.token_expire_time'), $iUserId);
         $this->oRedis->setex($sUserIdTokenKey, config('user.token_expire_time'), $sToken);
@@ -81,26 +79,27 @@ class UserService extends BaseApiService
     public function flushToken($iUserId)
     {
         $sUserIdTokenKey = $this->getRedisUserIdTokenKey($iUserId);
-        $sToken = $this->oRedis->get($sUserIdTokenKey);
+        $sToken          = $this->oRedis->get($sUserIdTokenKey);
+        $sTokenKey       = $this->getRedisTokenKey($sToken);
         if ($sToken) {
-            $this->oRedis->del($sToken);
+            $this->oRedis->del($sTokenKey);
             $this->oRedis->del($sUserIdTokenKey);
         }
     }
 
     public function refreshToken($iUserId)
     {
-        $oUser = $this->oUserRepo->findById($iUserId);
+        $oUser  = $this->oUserRepo->findById($iUserId);
         $sToken = $this->makeToken($oUser);
         $this->flushToken($iUserId);
         $this->setToken($sToken, $iUserId);
         return $sToken;
     }
-    
+
     public function addTokenExpireTime($sToken)
     {
-        $iUserId = $this->getUserIdByToken($sToken);
-        $sTokenKey = $this->getRedisTokenKey($sToken);
+        $iUserId         = $this->getUserIdByToken($sToken);
+        $sTokenKey       = $this->getRedisTokenKey($sToken);
         $sUserIdTokenKey = $this->getRedisUserIdTokenKey($iUserId);
         $this->oRedis->expire($sTokenKey, config('user.token_expire_time'));
         $this->oRedis->expire($sUserIdTokenKey, config('user.token_expire_time'));
@@ -109,8 +108,14 @@ class UserService extends BaseApiService
     public function addTokenExpireTimeByFd($iFd)
     {
         $iUserId = $this->getUserIdByFd($iFd);
-        $sToken = $this->getTokenByUserId($iUserId);
+        $sToken  = $this->getTokenByUserId($iUserId);
         $this->addTokenExpireTime($sToken);
+    }
+
+    public function logout($iUserId)
+    {
+        // 清token
+        $this->flushToken($iUserId);
     }
 
 }

@@ -22,6 +22,7 @@ Router::addGroup('/api',function () {
 		Router::addGroup('/user', function () {
 			Router::get('/info', 'App\Controller\Api\UserController@info');
 			Router::post('/refresh-token', 'App\Controller\Api\UserController@refreshToken');
+			Router::post('/logout', 'App\Controller\Api\UserController@logout');
 		});
 
 		// 影片

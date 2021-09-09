@@ -42,6 +42,12 @@ class UserController extends AbstractController
         return $this->success(['token' => $sToken]);
     }
 
+    public function logout()
+    {
+        $iUserId = $this->getUserId();
+        $this->oUserService->logout($iUserId);
+        return $this->success();
+    }
 
     public function info()
     {
