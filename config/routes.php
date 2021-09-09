@@ -45,11 +45,9 @@ Router::addGroup('/streamer-api',function (){
 
 
 // websocket
-Router::addServer('ws', function () {
-    Router::get('/', 'App\Controller\Websocket\ChatRoomController', [
-		'middleware' => [
-			UserAuthMiddleware::class, 
-		],
-	]);
-});
+Router::get('/', 'App\Controller\Websocket\ChatRoomController', [
+	'middleware' => [
+		UserAuthMiddleware::class, 
+	],
+]);
 
