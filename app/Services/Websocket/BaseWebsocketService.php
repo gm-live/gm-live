@@ -70,7 +70,7 @@ class BaseWebsocketService extends BaseService
     public function pushAllMsgByRoomId($iRoomId, $aMsgData = [])
     {
         $aRoomAllFds = $this->getAllFdByRoomId($iRoomId);
-        $oServer     = $this->getServer();
+        $oServer     = server();
         foreach ($aRoomAllFds as $iUserId => $iFd) {
             $oServer->push((int) $iFd, json_encode($aMsgData));
         }
