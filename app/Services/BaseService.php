@@ -6,6 +6,8 @@ namespace App\Services;
 use App\Exception\ExceptionCode as ExCode;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Redis\Redis;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\Server\ServerFactory;
 
 class BaseService
 {
@@ -15,6 +17,16 @@ class BaseService
      * @var Redis
      */
     protected $oRedis;
+
+    public function getContainer()
+    {
+        return ApplicationContext::getContainer();
+    }
+
+    public function getServer()
+    {
+        return $this->getContainer()->get(ServerFactory::class)->getServer()->getServer();
+    }
 
 	public function getRedisTokenKey($sToken)
     {

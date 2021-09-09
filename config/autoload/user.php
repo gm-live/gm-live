@@ -7,9 +7,6 @@ return [
 
     'token_key' => 'user_token:%s',
     
-    // user_id 取得 fd 號碼
-    'fd_key' => 'user_fd:%s',
-
     // 反查token用
     'user_id_token_key' => 'user_id_token:%s',
 ];

@@ -7,6 +7,7 @@ use App\Services\BaseService;
 use Hyperf\Di\Annotation\Inject;
 use App\Repositories\UserRepo;
 use App\Exception\ExceptionCode as ExCode;
+use Hyperf\Server\ServerFactory;
 
 class BaseWebsocketService extends BaseService
 {
@@ -66,9 +67,10 @@ class BaseWebsocketService extends BaseService
     	return $this->oRedis->hgetall($sRoomKey);
     }
 
-    public function pushAllMsgByRoomId($oServer, $iRoomId, $aMsgData = [])
+    public function pushAllMsgByRoomId($iRoomId, $aMsgData = [])
     {
     	$aRoomAllFds = $this->getAllFdByRoomId($iRoomId);
+        $oServer = $this->getServer();
         foreach ($aRoomAllFds as $iUserId => $iFd) {
             $oServer->push((int)$iFd, json_encode($aMsgData));
         }

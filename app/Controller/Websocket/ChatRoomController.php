@@ -46,10 +46,10 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
         $iRoomId = $oRequest->get['room_id'] ?? 1;  // 預設1號房間
 
         // 加入房間
-        $this->oChatRoomService->joinRoom($oServer, $sToken, $iFd, $iRoomId);
+        $this->oChatRoomService->joinRoom($sToken, $iFd, $iRoomId);
 
         // 推房間歷史最新的幾條數據
-        $this->oChatRoomService->pushLastMsgs($oServer, $iFd, $iRoomId);
+        $this->oChatRoomService->pushLastMsgs($iFd, $iRoomId);
     }
 
     public function onMessage($oServer, Frame $oFrame): void
@@ -66,7 +66,7 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
             $aData = json_decode($jData, true) ?? [];
             $iRoomId = $aData['room_id'] ?? null;
             $this->oWebsocketValidator->msgDataCheck($aData);
-            $this->oChatRoomService->handleMsg($oServer, $iFd, $aData);
+            $this->oChatRoomService->handleMsg($iFd, $aData);
 
         } catch (Throwable $e) {
 
@@ -85,7 +85,7 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
 
     public function onClose($oServer, int $iFd, int $reactorId): void
     {
-        $this->oChatRoomService->leaveAllRoom($oServer, $iFd);
+        $this->oChatRoomService->leaveAllRoom($iFd);
     }
 
 }
