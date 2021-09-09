@@ -4,7 +4,8 @@ declare (strict_types = 1);
 namespace App\Validators;
 
 use Exception;
-use App\Exception\ExceptionCode as ExCode;
+use App\Exception\WorkException;
+use App\Constants\ErrorCode as Code;
 
 class WebsocketValidator extends AbstractValidator
 {
@@ -29,7 +30,7 @@ class WebsocketValidator extends AbstractValidator
 
         if ($oValidator->fails()){
             $sErrorMsg = $oValidator->errors()->first();  
-            ExCode::fire(ExCode::WEBSOCKET_DATA_FORMAT_ERROR, $sErrorMsg);
+            throw new WorkException(Code::WEBSOCKET_DATA_FORMAT_ERROR, $sErrorMsg);
         }
     }
 

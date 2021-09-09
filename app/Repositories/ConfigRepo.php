@@ -5,7 +5,6 @@ namespace App\Repositories;
 
 use Hyperf\Di\Annotation\Inject;
 use App\Model\Config;
-use App\Exception\ExceptionCode as ExCode;
 
 class ConfigRepo extends BaseRepo
 {

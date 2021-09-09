@@ -6,7 +6,6 @@ namespace App\Services\Api;
 use Hyperf\Di\Annotation\Inject;
 use Exception;
 use App\Repositories\ConfigRepo;
-use App\Exception\ExceptionCode as ExCode;
 
 class VideoService extends BaseApiService
 {

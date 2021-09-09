@@ -3,7 +3,8 @@ declare (strict_types = 1);
 
 namespace App\Services;
 
-use App\Exception\ExceptionCode as ExCode;
+use App\Exception\WorkException;
+use App\Constants\ErrorCode;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Redis\Redis;
 
@@ -35,7 +36,7 @@ class BaseService
 	public function checkTokenOrFail($sToken)
     {
         if (! $this->checkToken($sToken)) {
-            ExCode::fire(ExCode::USER_TOKEN_ERROR);
+            throw new WorkException(ErrorCode::USER_TOKEN_ERROR);
         }
     }
 

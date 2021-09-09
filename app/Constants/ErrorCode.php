@@ -20,7 +20,57 @@ use Hyperf\Constants\Annotation\Constants;
 class ErrorCode extends AbstractConstants
 {
     /**
-     * @Message("Server Error！")
+     * @Message("未知錯誤")
      */
-    public const SERVER_ERROR = 500;
+    const SYSTEM_OTHER_ERROR                    = 1000; 
+
+    /**
+     * @Message("登入參數錯誤")
+     */
+    const USER_LOGIN_PARAMATER_ERROR            = 1001; 
+
+    /**
+     * @Message("密碼或用戶名錯誤")
+     */
+    const USER_LOGIN_USERNAME_OR_PASSWORD_ERROR = 1002; 
+
+    /**
+     * @Message("用戶建立失敗")
+     */
+    const USER_CREATE_ERROR                     = 1003; 
+
+    /**
+     * @Message("用戶名重複")
+     */
+    const USER_USERNAME_REPEAT_ERROR            = 1004; 
+
+    /**
+     * @Message("token 無效")
+     */
+    const USER_TOKEN_ERROR                      = 1005; 
+
+    /**
+     * @Message("無此用戶")
+     */
+    const USER_NOT_FOUND_ERROR                  = 1006;
+
+    /**
+     * @Message("註冊參數錯誤")
+     */
+    const USER_REGISTER_PARAMTER_ERROR          = 1007; 
+
+    /**
+     * @Message("取得影片參數錯誤")
+     */
+    const GET_VIDEO_URL_PARAMTER_ERROR          = 1008; 
+
+
+
+
+    /**
+     * @Message("socket 資料格式錯誤")
+     */
+    const WEBSOCKET_DATA_FORMAT_ERROR = 2001; 
+
+
 }

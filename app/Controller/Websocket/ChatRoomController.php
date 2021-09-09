@@ -13,7 +13,6 @@ use Swoole\WebSocket\Server as WebSocketServer;
 use Hyperf\Di\Annotation\Inject;
 use App\Services\Websocket\ChatRoomService;
 use Throwable;
-use App\Exception\ExceptionCode as ExCode;
 use App\Validators\WebsocketValidator;
 use App\Services\Api\UserService;
 use App\Constants\WebsocketConst as WsConst;

@@ -4,10 +4,11 @@ declare (strict_types = 1);
 
 namespace App\Exception\Handler;
 
-use App\Exception\ExceptionCode as ExCode;
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Psr\Http\Message\ResponseInterface;
+use App\Exception\WorkException;
+use App\Constants\ErrorCode;
 use Throwable;
 
 class AppExceptionHandler extends ExceptionHandler
@@ -34,16 +35,16 @@ class AppExceptionHandler extends ExceptionHandler
 
         $oHyperfResponse = new \Hyperf\HttpServer\Response($oResponse);
 
-        if (isset(ExCode::EX_MSGS[$iErrCode])) {
+        if ($oThrowable instanceof WorkException) {
             return $oHyperfResponse->json([
                 'status' => $iErrCode,
-                'msg'    => $sMsg ?? ExCode::EX_MSGS[$iErrCode],
+                'msg'    => $sMsg ?? ErrorCode::getMessage($iErrCode),
                 'data'   => [],
             ]);
         } else {
             return $oHyperfResponse->json([
-                'status' => ExCode::SYSTEM_OTHER_ERROR,
-                'msg'    => ExCode::EX_MSGS[ExCode::SYSTEM_OTHER_ERROR],
+                'status' => ErrorCode::SYSTEM_OTHER_ERROR,
+                'msg'    => ErrorCode::getMessage(ErrorCode::SYSTEM_OTHER_ERROR),
                 'data'   => [],
             ]);
         }

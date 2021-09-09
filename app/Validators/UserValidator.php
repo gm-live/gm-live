@@ -4,7 +4,8 @@ declare (strict_types = 1);
 namespace App\Validators;
 
 use Exception;
-use App\Exception\ExceptionCode as ExCode;
+use App\Exception\WorkException;
+use App\Constants\ErrorCode as Code;
 
 class UserValidator extends AbstractValidator
 {
@@ -25,7 +26,7 @@ class UserValidator extends AbstractValidator
 
         if ($oValidator->fails()){
             $sErrorMsg = $oValidator->errors()->first();  
-            ExCode::fire(ExCode::USER_REGISTER_PARAMTER_ERROR, $sErrorMsg);
+            throw new WorkException(Code::USER_REGISTER_PARAMTER_ERROR, $sErrorMsg);
         }
     }
 
@@ -45,7 +46,7 @@ class UserValidator extends AbstractValidator
 
         if ($oValidator->fails()){
             $sErrorMsg = $oValidator->errors()->first();  
-            ExCode::fire(ExCode::USER_LOGIN_PARAMATER_ERROR, $sErrorMsg);
+            throw new WorkException(Code::USER_LOGIN_PARAMATER_ERROR, $sErrorMsg);
         }
     }
 

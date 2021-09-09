@@ -6,9 +6,10 @@ namespace App\Services\Websocket;
 use App\Services\BaseService;
 use Hyperf\Di\Annotation\Inject;
 use App\Repositories\UserRepo;
-use App\Exception\ExceptionCode as ExCode;
 use Hyperf\Server\ServerFactory;
 use App\Constants\WebsocketConst as WsConst;
+use App\Exception\WorkException;
+use App\Constants\ErrorCode as Code;
 
 class BaseWebsocketService extends BaseService
 {
@@ -100,7 +101,7 @@ class BaseWebsocketService extends BaseService
         $oUser   = $this->oUserRepo->findById($iUserId);
 
         if (!$oUser) {
-            ExCode::fire(ExCode::USER_NOT_FOUND_ERROR);
+            throw new WorkException(Code::USER_NOT_FOUND_ERROR);
         }
 
         return $oUser;

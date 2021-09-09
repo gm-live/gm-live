@@ -7,7 +7,8 @@ use Hyperf\Di\Annotation\Inject;
 use Exception;
 use App\Repositories\UserRepo;
 use Hyperf\Redis\Redis;
-use App\Exception\ExceptionCode as ExCode;
+use App\Exception\WorkException;
+use App\Constants\ErrorCode as Code;
 
 class UserService extends BaseApiService
 {
@@ -28,7 +29,7 @@ class UserService extends BaseApiService
     {
         $oUser = $this->oUserRepo->findByUsername($sUsername);
         if ($oUser) {
-            ExCode::fire(ExCode::USER_USERNAME_REPEAT_ERROR);
+            throw new WorkException(Code::USER_USERNAME_REPEAT_ERROR);
         }
 
         $sHashPwd = $this->makePasswordHash($sUsername, $sPasssword);
@@ -42,12 +43,12 @@ class UserService extends BaseApiService
     {
         $oUser = $this->oUserRepo->findByUsername($sUsername);
         if (!$oUser) {
-            ExCode::fire(ExCode::USER_LOGIN_USERNAME_OR_PASSWORD_ERROR);
+            throw new WorkException(Code::USER_LOGIN_USERNAME_OR_PASSWORD_ERROR);
         }
 
         $sHashPwd = $this->makePasswordHash($sUsername, $sPasssword);
         if ($sHashPwd != $oUser->password) {
-            ExCode::fire(ExCode::USER_LOGIN_USERNAME_OR_PASSWORD_ERROR);
+            throw new WorkException(Code::USER_LOGIN_USERNAME_OR_PASSWORD_ERROR);
         }
 
         $sToken = $this->makeToken($oUser);

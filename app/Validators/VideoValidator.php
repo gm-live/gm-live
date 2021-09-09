@@ -4,7 +4,8 @@ declare (strict_types = 1);
 namespace App\Validators;
 
 use Exception;
-use App\Exception\ExceptionCode as ExCode;
+use App\Exception\WorkException;
+use App\Constants\ErrorCode as Code;
 
 class VideoValidator extends AbstractValidator
 {
@@ -23,7 +24,7 @@ class VideoValidator extends AbstractValidator
 
         if ($oValidator->fails()){
             $sErrorMsg = $oValidator->errors()->first();  
-            ExCode::fire(ExCode::GET_VIDEO_URL_PARAMTER_ERROR, $sErrorMsg);
+            throw new WorkException(Code::GET_VIDEO_URL_PARAMTER_ERROR, $sErrorMsg);
         }
     }
 

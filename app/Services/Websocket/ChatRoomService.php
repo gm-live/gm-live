@@ -6,7 +6,8 @@ namespace App\Services\Websocket;
 use Hyperf\Di\Annotation\Inject;
 use Exception;
 use Hyperf\Redis\Redis;
-use App\Exception\ExceptionCode as ExCode;
+use App\Exception\WorkException;
+use App\Constants\ErrorCode as Code;
 
 class ChatRoomService extends BaseWebsocketService
 {
@@ -18,7 +19,7 @@ class ChatRoomService extends BaseWebsocketService
 
         // TODO 更多檢查
         if (! $oUser) {
-            ExCode::fire(ExCode::USER_NOT_FOUND_ERROR);
+            throw new WorkException(Code::USER_NOT_FOUND_ERROR);
         }
         
         // fd 綁定 user_id

@@ -5,7 +5,8 @@ namespace App\Repositories;
 
 use Hyperf\Di\Annotation\Inject;
 use App\Model\User;
-use App\Exception\ExceptionCode as ExCode;
+use App\Exception\WorkException;
+use App\Constants\ErrorCode;
 
 class UserRepo extends BaseRepo
 {
@@ -33,7 +34,7 @@ class UserRepo extends BaseRepo
 		$oUser->password = $sPassword;
 		$bDbResult = $oUser->save();
 		if (! $bDbResult) {
-            ExCode::fire(ExCode::USER_CREATE_ERROR);
+			throw new WorkException(ErrorCode::USER_CREATE_ERROR);
 		}
 		return $oUser;
 	}
