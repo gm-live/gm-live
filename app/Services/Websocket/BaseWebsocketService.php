@@ -13,9 +13,9 @@ class BaseWebsocketService extends BaseService
 {
     const WEBSOCKET_STATUS_OK = 1;
 
-	// 推送功能類型
-    const MSG_TYPE_NORMAL = 1;  // 一般聊天文字
-    const MSG_TYPE_SYSTEM = 2;  // 系統訊息文字
+    // 推送功能類型
+    const MSG_TYPE_NORMAL = 1; // 一般聊天文字
+    const MSG_TYPE_SYSTEM = 2; // 系統訊息文字
 
     /**
      * @Inject
@@ -35,81 +35,80 @@ class BaseWebsocketService extends BaseService
 
     public function bindFdAndUserId($iFd, $iUserId)
     {
-    	$sFdKey = $this->getFdUserMapKey();
-    	$this->oRedis->hset($sFdKey, (string)$iFd, $iUserId);
+        $sFdKey = $this->getFdUserMapKey();
+        $this->oRedis->hset($sFdKey, (string) $iFd, $iUserId);
     }
 
     public function unbindFdAndUserId($iFd)
     {
-    	$sFdKey = $this->getFdUserMapKey();
-    	$this->oRedis->hdel($sFdKey, (string)$iFd);
+        $sFdKey = $this->getFdUserMapKey();
+        $this->oRedis->hdel($sFdKey, (string) $iFd);
     }
 
     public function joinRoomByFd($iFd, $iUserId, $iRoomId)
     {
-    	$sRoomKey = $this->getRoomKey($iRoomId);
-    	$sFdRoomKey = $this->getFdRoomKey($iFd);
-    	$this->oRedis->hset($sRoomKey, (string)$iUserId, $iFd);
-    	$this->oRedis->hset($sFdRoomKey, (string)$iRoomId, $iUserId);
+        $sRoomKey   = $this->getRoomKey($iRoomId);
+        $sFdRoomKey = $this->getFdRoomKey($iFd);
+        $this->oRedis->hset($sRoomKey, (string) $iUserId, $iFd);
+        $this->oRedis->hset($sFdRoomKey, (string) $iRoomId, $iUserId);
     }
 
     public function leaveRoomByFd($iFd, $iUserId, $iRoomId)
     {
-    	$sRoomKey = $this->getRoomKey($iRoomId);
-    	$sFdRoomKey = $this->getFdRoomKey($iFd);
-    	$this->oRedis->hdel($sRoomKey, (string)$iUserId);
-    	$this->oRedis->hdel($sFdRoomKey, (string)$iRoomId);
+        $sRoomKey   = $this->getRoomKey($iRoomId);
+        $sFdRoomKey = $this->getFdRoomKey($iFd);
+        $this->oRedis->hdel($sRoomKey, (string) $iUserId);
+        $this->oRedis->hdel($sFdRoomKey, (string) $iRoomId);
     }
 
     public function getAllFdByRoomId($iRoomId)
     {
-    	$sRoomKey = $this->getRoomKey($iRoomId);
-    	return $this->oRedis->hgetall($sRoomKey);
+        $sRoomKey = $this->getRoomKey($iRoomId);
+        return $this->oRedis->hgetall($sRoomKey);
     }
 
     public function pushAllMsgByRoomId($iRoomId, $aMsgData = [])
     {
-    	$aRoomAllFds = $this->getAllFdByRoomId($iRoomId);
-        $oServer = $this->getServer();
+        $aRoomAllFds = $this->getAllFdByRoomId($iRoomId);
+        $oServer     = $this->getServer();
         foreach ($aRoomAllFds as $iUserId => $iFd) {
-            $oServer->push((int)$iFd, json_encode($aMsgData));
+            $oServer->push((int) $iFd, json_encode($aMsgData));
         }
     }
 
     public function makeMsg(
-        $iRoomId, 
-        $sMsg = '', 
+        $iRoomId,
+        $sMsg = '',
         $oUser = null,
-        $iMsgType = self::MSG_TYPE_NORMAL, 
+        $iMsgType = self::MSG_TYPE_NORMAL,
         $iStatus = self::WEBSOCKET_STATUS_OK
     ) {
-    	return [
-            'status' => $iStatus,
-            'room_id' => $iRoomId,
-    		'msg_type' => $iMsgType,
-            'user_id' => $oUser->id ?? '',
+        return [
+            'status'   => $iStatus,
+            'room_id'  => $iRoomId,
+            'msg_type' => $iMsgType,
+            'user_id'  => $oUser->id ?? '',
             'username' => $oUser->username ?? '',
-    		'msg' => $sMsg,
-    	];
+            'msg'      => $sMsg,
+        ];
     }
 
     public function getRoomIdsByFd($iFd)
     {
-    	$sFdRoomKey = $this->getFdRoomKey($iFd);
-    	return $this->oRedis->hgetall($sFdRoomKey);
+        $sFdRoomKey = $this->getFdRoomKey($iFd);
+        return $this->oRedis->hgetall($sFdRoomKey);
     }
 
     public function getUserOrFailByFd($iFd)
     {
         $iUserId = $this->getUserIdByFd($iFd);
-        $oUser = $this->oUserRepo->findById($iUserId);
+        $oUser   = $this->oUserRepo->findById($iUserId);
 
-        if (! $oUser) {
+        if (!$oUser) {
             ExCode::fire(ExCode::USER_NOT_FOUND_ERROR);
         }
 
         return $oUser;
     }
-
 
 }
