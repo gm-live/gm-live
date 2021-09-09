@@ -16,11 +16,11 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Container\ContainerInterface;
 use App\Services\Api\UserService;
+use App\Constants\HttpConst;
 
 abstract class AbstractController
 {
-    const STATUS_OK = 1;
-    
+
     /**
      * @Inject
      * @var ContainerInterface
@@ -49,7 +49,7 @@ abstract class AbstractController
     public function success($aData = [])
     {
         return [
-            'status' => self::STATUS_OK,
+            'status' => HttpConst::STATUS_OK,
             'msg' => 'success',
             'data' => $aData,
         ];

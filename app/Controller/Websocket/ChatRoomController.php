@@ -16,6 +16,7 @@ use Throwable;
 use App\Exception\ExceptionCode as ExCode;
 use App\Validators\WebsocketValidator;
 use App\Services\Api\UserService;
+use App\Constants\WebsocketConst as WsConst;
 
 
 class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
@@ -75,7 +76,7 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
                     $iRoomId,
                     $e->getMessage(), 
                     null,
-                    $this->oChatRoomService::MSG_TYPE_SYSTEM, 
+                    WsConst::MSG_TYPE_SYSTEM, 
                     $e->getCode()
                 );
                 $oServer->push((int)$iFd, json_encode($aMsgData, JSON_UNESCAPED_UNICODE));

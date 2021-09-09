@@ -8,15 +8,10 @@ use Hyperf\Di\Annotation\Inject;
 use App\Repositories\UserRepo;
 use App\Exception\ExceptionCode as ExCode;
 use Hyperf\Server\ServerFactory;
+use App\Constants\WebsocketConst as WsConst;
 
 class BaseWebsocketService extends BaseService
 {
-    const WEBSOCKET_STATUS_OK = 1;
-
-    // 推送功能類型
-    const MSG_TYPE_NORMAL = 1; // 一般聊天文字
-    const MSG_TYPE_SYSTEM = 2; // 系統訊息文字
-
     /**
      * @Inject
      * @var UserRepo
@@ -80,8 +75,8 @@ class BaseWebsocketService extends BaseService
         $iRoomId,
         $sMsg = '',
         $oUser = null,
-        $iMsgType = self::MSG_TYPE_NORMAL,
-        $iStatus = self::WEBSOCKET_STATUS_OK
+        $iMsgType = WsConst::MSG_TYPE_NORMAL,
+        $iStatus = WsConst::WEBSOCKET_STATUS_OK
     ) {
         return [
             'status'   => $iStatus,
