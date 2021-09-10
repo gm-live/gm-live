@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cf297c89ae769b3f4d3de89dcdfe667c",
+    "content-hash": "efd473babbac754a625ff6aef5f8b942",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2207,6 +2207,62 @@
             "keywords": [
                 "hyperf",
                 "model-listener",
+                "php",
+                "swoole"
+            ],
+            "support": {
+                "docs": "https://hyperf.wiki",
+                "issues": "https://github.com/hyperf/hyperf/issues",
+                "pull-request": "https://github.com/hyperf/hyperf/pulls",
+                "source": "https://github.com/hyperf/hyperf"
+            },
+            "time": "2021-07-18T06:50:14+00:00"
+        },
+        {
+            "name": "hyperf/phar",
+            "version": "v2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/phar.git",
+                "reference": "d5e42cfd77a7b2d6ac9623b5e75b6d4c3b870141"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/phar/zipball/d5e42cfd77a7b2d6ac9623b5e75b6d4c3b870141",
+                "reference": "d5e42cfd77a7b2d6ac9623b5e75b6d4c3b870141",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "hyperf/command": "~2.2.0",
+                "hyperf/contract": "~2.2.0",
+                "nikic/php-parser": "^4.1",
+                "php": ">=7.2",
+                "psr/container": "^1.0|^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.2-dev"
+                },
+                "hyperf": {
+                    "config": "Hyperf\\Phar\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hyperf\\Phar\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A component that supports pack Hyperf project as a Phar stand-alone package.",
+            "homepage": "https://hyperf.io",
+            "keywords": [
+                "hyperf",
+                "phar",
                 "php",
                 "swoole"
             ],
