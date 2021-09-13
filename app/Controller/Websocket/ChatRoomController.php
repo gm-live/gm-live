@@ -75,7 +75,16 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
             $this->oChatRoomService->handleMsg($iFd, $aData);
 
         } catch (Throwable $e) {
-            $oServer->push($iFd, $e->getMessage());
+            if ($iRoomId) {
+                $aMsgData = $this->oChatRoomService->makeMsg(
+                    $iRoomId,
+                    $e->getMessage(), 
+                    null,
+                    WsConst::MSG_TYPE_SYSTEM, 
+                    $e->getCode()
+                );
+                $oServer->push((int)$iFd, json_encode($aMsgData, JSON_UNESCAPED_UNICODE));
+            }
         }
     }
 
