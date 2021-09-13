@@ -13,7 +13,7 @@ use Swoole\WebSocket\Server as WebSocketServer;
 use Hyperf\Di\Annotation\Inject;
 use App\Services\Websocket\ChatRoomService;
 use Throwable;
-use App\Validators\WebsocketValidator;
+use App\Validators\ChatRoomValidator;
 use App\Services\Api\UserService;
 use App\Constants\WebsocketConst as WsConst;
 
@@ -29,9 +29,9 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
 
     /**
      * @Inject
-     * @var WebsocketValidator
+     * @var ChatRoomValidator
      */
-    protected $oWebsocketValidator;
+    protected $oChatRoomValidator;
 
     /**
      * @Inject
@@ -65,7 +65,7 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
             // 驗證格式
             $aData = json_decode($jData, true) ?? [];
             $iRoomId = $aData['room_id'] ?? null;
-            $this->oWebsocketValidator->msgDataCheck($aData);
+            $this->oChatRoomValidator->msgDataCheck($aData);
             $this->oChatRoomService->handleMsg($iFd, $aData);
 
         } catch (Throwable $e) {

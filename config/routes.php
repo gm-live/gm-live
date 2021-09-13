@@ -25,10 +25,11 @@ Router::addGroup('/api',function () {
 			Router::post('/logout', 'App\Controller\Api\UserController@logout');
 		});
 
-		// 影片
-		Router::addGroup('/video', function () {
-			Router::get('', 'App\Controller\Api\VideoController@getVideo');
+		// 聊天室API
+		Router::addGroup('/chat-rooms', function () {
+			Router::get('', 'App\Controller\Api\ChatRoomController@rooms');
 		});
+
 
 	}, 
 	[
@@ -41,7 +42,7 @@ Router::addGroup('/api',function () {
 
 // 串流推向主機專用API
 Router::addGroup('/streamer-api',function (){
-	Router::get('/check', 'App\Controller\Streamer\StreamController@check');
+	Router::get('/open-room', 'App\Controller\Streamer\StreamController@openRoom');
 });
 
 

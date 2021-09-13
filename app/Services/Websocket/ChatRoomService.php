@@ -8,11 +8,18 @@ use Exception;
 use Hyperf\Redis\Redis;
 use App\Exception\WorkException;
 use App\Constants\ErrorCode as Code;
+use App\Repositories\ConfigRepo;
 
 class ChatRoomService extends BaseWebsocketService
 {
 
-    public function joinRoom($sToken, $iFd, $iRoomId = 1)
+    /**
+     * @Inject
+     * @var ConfigRepo
+     */
+    protected $oConfigRepo;
+
+    public function joinRoom($sToken, $iFd, $sRoomId)
     {
         $iUserId = $this->getUserIdByToken($sToken);
         $oUser = $this->oUserRepo->findById($iUserId);
@@ -26,12 +33,12 @@ class ChatRoomService extends BaseWebsocketService
         $this->bindFdAndUserId($iFd, $iUserId);
 
         // 加入房間
-        $this->joinRoomByFd($iFd, $iUserId, $iRoomId);
+        $this->joinRoomByFd($iFd, $iUserId, $sRoomId);
 
         // 推送歡迎通知
         $sMsg = $oUser->username . ' joined room!';
-        $aMsg = $this->makeMsg($iRoomId, $sMsg, $oUser);
-        $this->pushAllMsgByRoomId($iRoomId, $aMsg);
+        $aMsg = $this->makeMsg($sRoomId, $sMsg, $oUser);
+        $this->pushAllMsgByRoomId($sRoomId, $aMsg);
     }
 
     public function leaveAllRoom($iFd)
@@ -40,37 +47,54 @@ class ChatRoomService extends BaseWebsocketService
         $oUser = $this->getUserOrFailByFd($iFd);
 
         $sMsg = $oUser->username . ' leaved room!';
-        $aMsg = $this->makeMsg($iRoomId, $sMsg, $oUser);
-        foreach ($aRoomIds as $iRoomId => $_) {
+        $aMsg = $this->makeMsg($sRoomId, $sMsg, $oUser);
+        foreach ($aRoomIds as $sRoomId => $_) {
 
             // 離開房間
-            $this->leaveRoomByFd($iFd, $oUser->id, $iRoomId);
+            $this->leaveRoomByFd($iFd, $oUser->id, $sRoomId);
 
             // 發出離開訊息
-            $this->pushAllMsgByRoomId($iRoomId, $aMsg);
+            $this->pushAllMsgByRoomId($sRoomId, $aMsg);
         }
 
         // fd 解綁 user_id
         $this->unbindFdAndUserId($iFd, $oUser->id);
     }
 
-    public function leaveRoom($iFd, $iRoomId)
+    public function leaveRoom($iFd, $sRoomId)
     {
         $oUser = $this->getUserOrFailByFd($iFd);
 
         // 離開房間
-        $this->leaveRoomByFd($iFd, $oUser->id, $iRoomId);
+        $this->leaveRoomByFd($iFd, $oUser->id, $sRoomId);
 
         // 發出離開訊息
         $sMsg = $oUser->username . ' leaved room!';
-        $aMsg = $this->makeMsg($iRoomId, $sMsg, $oUser);
-        $this->pushAllMsgByRoomId($iRoomId, $aMsg);
+        $aMsg = $this->makeMsg($sRoomId, $sMsg, $oUser);
+        $this->pushAllMsgByRoomId($sRoomId, $aMsg);
 
     }
 
+    public function joinRoomByFd($iFd, $iUserId, $sRoomId)
+    {
+        $sRoomKey   = $this->getRoomKey($sRoomId);
+        $sFdRoomKey = $this->getFdRoomKey($iFd);
+        $this->oRedis->hset($sRoomKey, (string) $iUserId, $iFd);
+        $this->oRedis->hset($sFdRoomKey, (string) $sRoomId, $iUserId);
+    }
+
+    public function leaveRoomByFd($iFd, $iUserId, $sRoomId)
+    {
+        $sRoomKey   = $this->getRoomKey($sRoomId);
+        $sFdRoomKey = $this->getFdRoomKey($iFd);
+        $this->oRedis->hdel($sRoomKey, (string) $iUserId);
+        $this->oRedis->hdel($sFdRoomKey, (string) $sRoomId);
+    }
+
+
     public function handleMsg($iFd, $aData)
     {
-        $iRoomId  = $aData['room_id'];
+        $sRoomId  = $aData['room_id'];
         $iMsgType = $aData['msg_type'];
         $sMsg     = $aData['msg'];
         $oUser    = $this->getUserOrFailByFd($iFd);
@@ -78,13 +102,44 @@ class ChatRoomService extends BaseWebsocketService
         // TODO 持久化
         
         // 推送
-        $aMsg = $this->makeMsg($iRoomId, $sMsg, $oUser);
-        $this->pushAllMsgByRoomId($iRoomId, $aMsg);
+        $aMsg = $this->makeMsg($sRoomId, $sMsg, $oUser);
+        $this->pushAllMsgByRoomId($sRoomId, $aMsg);
     }
 
-    public function pushLastMsgs($iFd, $iRoomId)
+    public function pushLastMsgs($iFd, $sRoomId)
     {
          // TODO 推歷史資料   
+    }
+
+    public function getOnlineRooms($iUserId = null)
+    {
+        $aRooms = [];
+
+        if ($iUserId) {
+            // TODO user_id預留 可用於檢核
+        }
+        
+        $aAllRoomsIds = $this->getAllOnlineRoomIds();
+
+        // TODO 主播資訊模組
+        $sHlsServerDomain = $this->oConfigRepo->getValueByName('hls_server_domain');
+        $sVideoName = 'ppg.m3u8';
+        $aHardCodeData = [
+            '1' => [
+                'room_id' => '1',
+                'room_pic' => '',
+                'streamer_id' => 1,
+                'name' => '派派哥',
+                'video_url' => $sHlsServerDomain . $sVideoName,
+            ],
+        ];
+
+        if (in_array('1', $aAllRoomsIds)) {
+            $aRooms[] = $aHardCodeData['1'];
+        }
+
+        return $aRooms;
+
     }
 
 }

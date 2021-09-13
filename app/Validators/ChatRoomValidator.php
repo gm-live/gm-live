@@ -7,7 +7,7 @@ use Exception;
 use App\Exception\WorkException;
 use App\Constants\ErrorCode as Code;
 
-class WebsocketValidator extends AbstractValidator
+class ChatRoomValidator extends AbstractValidator
 {
 
     public function msgDataCheck($aParams)

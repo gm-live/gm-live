@@ -41,22 +41,6 @@ class BaseWebsocketService extends BaseService
         $this->oRedis->hdel($sFdKey, (string) $iFd);
     }
 
-    public function joinRoomByFd($iFd, $iUserId, $iRoomId)
-    {
-        $sRoomKey   = $this->getRoomKey($iRoomId);
-        $sFdRoomKey = $this->getFdRoomKey($iFd);
-        $this->oRedis->hset($sRoomKey, (string) $iUserId, $iFd);
-        $this->oRedis->hset($sFdRoomKey, (string) $iRoomId, $iUserId);
-    }
-
-    public function leaveRoomByFd($iFd, $iUserId, $iRoomId)
-    {
-        $sRoomKey   = $this->getRoomKey($iRoomId);
-        $sFdRoomKey = $this->getFdRoomKey($iFd);
-        $this->oRedis->hdel($sRoomKey, (string) $iUserId);
-        $this->oRedis->hdel($sFdRoomKey, (string) $iRoomId);
-    }
-
     public function getAllFdByRoomId($iRoomId)
     {
         $sRoomKey = $this->getRoomKey($iRoomId);
@@ -106,5 +90,17 @@ class BaseWebsocketService extends BaseService
 
         return $oUser;
     }
+
+    public function getAllOnlineRoomIds(): array
+    {
+        $sRoomKey = $this->getRoomKey('*');
+        $aOnlineRooms = $this->oRedis->keys($sRoomKey);
+        foreach ($aOnlineRooms as &$iRoomId) {
+            list(,$iRoomId) = explode(':', $iRoomId);
+        }
+        return $aOnlineRooms;
+    }
+
+
 
 }
