@@ -19,7 +19,7 @@ class ChatRoomService extends BaseWebsocketService
      */
     protected $oConfigRepo;
 
-    public function joinRoom($sToken, $iFd, $sRoomId)
+    public function joinRoom($sToken, $iFd, $iRoomId)
     {
         $iUserId = $this->getUserIdByToken($sToken);
         $oUser = $this->oUserRepo->findById($iUserId);
@@ -33,12 +33,12 @@ class ChatRoomService extends BaseWebsocketService
         $this->bindFdAndUserId($iFd, $iUserId);
 
         // 加入房間
-        $this->joinRoomByFd($iFd, $iUserId, $sRoomId);
+        $this->joinRoomByFd($iFd, $iUserId, $iRoomId);
 
         // 推送歡迎通知
         $sMsg = $oUser->username . ' joined room!';
-        $aMsg = $this->makeMsg($sRoomId, $sMsg, $oUser);
-        $this->pushAllMsgByRoomId($sRoomId, $aMsg);
+        $aMsg = $this->makeMsg($iRoomId, $sMsg, $oUser);
+        $this->pushAllMsgByRoomId($iRoomId, $aMsg);
     }
 
     public function leaveAllRoom($iFd)
@@ -47,54 +47,58 @@ class ChatRoomService extends BaseWebsocketService
         $oUser = $this->getUserOrFailByFd($iFd);
 
         $sMsg = $oUser->username . ' leaved room!';
-        $aMsg = $this->makeMsg($sRoomId, $sMsg, $oUser);
-        foreach ($aRoomIds as $sRoomId => $_) {
+        $aMsg = $this->makeMsg($iRoomId, $sMsg, $oUser);
+        foreach ($aRoomIds as $iRoomId => $_) {
 
             // 離開房間
-            $this->leaveRoomByFd($iFd, $oUser->id, $sRoomId);
+            $this->leaveRoomByFd($iFd, $oUser->id, $iRoomId);
 
             // 發出離開訊息
-            $this->pushAllMsgByRoomId($sRoomId, $aMsg);
+            $this->pushAllMsgByRoomId($iRoomId, $aMsg);
         }
 
         // fd 解綁 user_id
         $this->unbindFdAndUserId($iFd, $oUser->id);
     }
 
-    public function leaveRoom($iFd, $sRoomId)
+    public function leaveRoom($iFd, $iRoomId)
     {
         $oUser = $this->getUserOrFailByFd($iFd);
 
         // 離開房間
-        $this->leaveRoomByFd($iFd, $oUser->id, $sRoomId);
+        $this->leaveRoomByFd($iFd, $oUser->id, $iRoomId);
 
         // 發出離開訊息
         $sMsg = $oUser->username . ' leaved room!';
-        $aMsg = $this->makeMsg($sRoomId, $sMsg, $oUser);
-        $this->pushAllMsgByRoomId($sRoomId, $aMsg);
+        $aMsg = $this->makeMsg($iRoomId, $sMsg, $oUser);
+        $this->pushAllMsgByRoomId($iRoomId, $aMsg);
 
     }
 
-    public function joinRoomByFd($iFd, $iUserId, $sRoomId)
+    public function joinRoomByFd($iFd, $iUserId, $iRoomId)
     {
-        $sRoomKey   = $this->getRoomKey($sRoomId);
+        $sRoomKey   = $this->getRoomKey($iRoomId);
+        $iHasRoom = $this->oRedis->exists($sRoomKey);
+        if (! $iHasRoom) {
+            throw new WorkException(Code::CHAT_ROOM_NOT_EXISTS);
+        }
         $sFdRoomKey = $this->getFdRoomKey($iFd);
         $this->oRedis->hset($sRoomKey, (string) $iUserId, $iFd);
-        $this->oRedis->hset($sFdRoomKey, (string) $sRoomId, $iUserId);
+        $this->oRedis->hset($sFdRoomKey, (string) $iRoomId, $iUserId);
     }
 
-    public function leaveRoomByFd($iFd, $iUserId, $sRoomId)
+    public function leaveRoomByFd($iFd, $iUserId, $iRoomId)
     {
-        $sRoomKey   = $this->getRoomKey($sRoomId);
+        $sRoomKey   = $this->getRoomKey($iRoomId);
         $sFdRoomKey = $this->getFdRoomKey($iFd);
         $this->oRedis->hdel($sRoomKey, (string) $iUserId);
-        $this->oRedis->hdel($sFdRoomKey, (string) $sRoomId);
+        $this->oRedis->hdel($sFdRoomKey, (string) $iRoomId);
     }
 
 
     public function handleMsg($iFd, $aData)
     {
-        $sRoomId  = $aData['room_id'];
+        $iRoomId  = $aData['room_id'];
         $iMsgType = $aData['msg_type'];
         $sMsg     = $aData['msg'];
         $oUser    = $this->getUserOrFailByFd($iFd);
@@ -102,11 +106,11 @@ class ChatRoomService extends BaseWebsocketService
         // TODO 持久化
         
         // 推送
-        $aMsg = $this->makeMsg($sRoomId, $sMsg, $oUser);
-        $this->pushAllMsgByRoomId($sRoomId, $aMsg);
+        $aMsg = $this->makeMsg($iRoomId, $sMsg, $oUser);
+        $this->pushAllMsgByRoomId($iRoomId, $aMsg);
     }
 
-    public function pushLastMsgs($iFd, $sRoomId)
+    public function pushLastMsgs($iFd, $iRoomId)
     {
          // TODO 推歷史資料   
     }

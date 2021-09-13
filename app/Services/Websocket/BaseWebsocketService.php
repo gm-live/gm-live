@@ -101,6 +101,18 @@ class BaseWebsocketService extends BaseService
         return $aOnlineRooms;
     }
 
+    public function closeRoom($iRoomId)
+    {
+        $sRoomKey = $this->getRoomKey($iRoomId);
+        $this->oRedis->del($sRoomKey);
+    }
+
+    public function openRoom($iRoomId)
+    {
+        $sRoomKey = $this->getRoomKey($iRoomId);
+        $this->oRedis->hset($sRoomKey, 'streamer', -1);
+    }
+
 
 
 }

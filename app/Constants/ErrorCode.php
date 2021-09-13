@@ -60,9 +60,9 @@ class ErrorCode extends AbstractConstants
     const USER_REGISTER_PARAMTER_ERROR          = 1007; 
 
     /**
-     * @Message("取得影片參數錯誤")
+     * @Message("房間不存在")
      */
-    const GET_VIDEO_URL_PARAMTER_ERROR          = 1008; 
+    const CHAT_ROOM_NOT_EXISTS                  = 1008; 
 
 
 

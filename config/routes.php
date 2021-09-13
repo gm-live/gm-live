@@ -43,6 +43,7 @@ Router::addGroup('/api',function () {
 // 串流推向主機專用API
 Router::addGroup('/streamer-api',function (){
 	Router::get('/open-room', 'App\Controller\Streamer\StreamController@openRoom');
+	Router::get('/close-room', 'App\Controller\Streamer\StreamController@closeRoom');
 });
 
 
