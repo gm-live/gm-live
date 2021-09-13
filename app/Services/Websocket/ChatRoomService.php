@@ -127,7 +127,7 @@ class ChatRoomService extends BaseWebsocketService
 
         // TODO 主播資訊模組
         $sHlsServerDomain = $this->oConfigRepo->getValueByName('hls_server_domain');
-        $sVideoName = 'ppg.m3u8';
+        $sVideoName = '1.m3u8'; // TODO 未來改TOKEN.m3u8
         $aHardCodeData = [
             '1' => [
                 'room_id' => '1',
