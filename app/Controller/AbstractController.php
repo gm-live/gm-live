@@ -17,6 +17,7 @@ use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Container\ContainerInterface;
 use App\Services\Api\UserService;
 use App\Constants\HttpConst;
+use Hyperf\Logger\LoggerFactory;
 
 abstract class AbstractController
 {
@@ -45,6 +46,12 @@ abstract class AbstractController
      */
     protected $oUserService;
 
+    protected $oLogger;
+
+    public function __construct(LoggerFactory $oLoggerFactory)
+    {
+        $this->oLogger = $oLoggerFactory->get();
+    }
 
     public function success($aData = [])
     {

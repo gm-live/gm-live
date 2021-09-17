@@ -10,7 +10,6 @@ use Hyperf\Di\Annotation\Inject;
 
 class UserController extends AbstractController
 {
-
 	/**
 	 * @Inject
 	 * @var UserValidator
@@ -32,6 +31,7 @@ class UserController extends AbstractController
     	$sUsername = $this->oRequest->input('username');
     	$sPasssword = $this->oRequest->input('password');
     	$sToken = $this->oUserService->login($sUsername, $sPasssword);
+        $this->oLogger->info($sUsername . ' login success!');
    		return $this->success(['token' => $sToken]);
     }
 

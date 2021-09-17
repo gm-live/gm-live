@@ -7,15 +7,22 @@ use App\Exception\WorkException;
 use App\Constants\ErrorCode;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\Redis\Redis;
+use Hyperf\Logger\LoggerFactory;
 
 class BaseService
 {
+    protected $oLogger = null;
 
     /**
      * @Inject
      * @var Redis
      */
     protected $oRedis;
+
+    public function __construct(LoggerFactory $oLoggerFactory)
+    {
+        $this->oLogger = $oLoggerFactory->get();
+    }
 
 	public function getRedisTokenKey($sToken)
     {

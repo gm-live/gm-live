@@ -13,7 +13,7 @@ use Throwable;
 
 class StreamController extends AbstractController
 {
-	protected $logger;
+	protected $oLogger;
 
     /**
      * @Inject
@@ -23,12 +23,12 @@ class StreamController extends AbstractController
 
     public function __construct(LoggerFactory $loggerFactory)
     {
-        $this->logger = $loggerFactory->get();
+        $this->oLogger = $loggerFactory->get();
     }
 
     public function openRoom()
     {
-        $this->logger->info("open Rtmps: Param:", $this->oRequest->all());
+        $this->oLogger->info("open Rtmps: Param:", $this->oRequest->all());
         
         // 串流金鑰
         $iRoomId = $this->oRequest->input('name', null);
@@ -41,7 +41,7 @@ class StreamController extends AbstractController
                 return $this->oResponse->raw("")->withStatus(202);
             }
         } catch (Throwable $e) {
-            $this->logger->info('open Rtmps: error: ' . $e->getMessage());
+            $this->oLogger->info('open Rtmps: error: ' . $e->getMessage());
         }
         
         return $this->oResponse->raw("")->withStatus(403);
@@ -49,7 +49,7 @@ class StreamController extends AbstractController
 
     public function closeRoom()
     {
-        $this->logger->info("close Rtmps: Param:", $this->oRequest->all());
+        $this->oLogger->info("close Rtmps: Param:", $this->oRequest->all());
 
         // 串流金鑰
         $iRoomId = $this->oRequest->input('name', null);
@@ -57,7 +57,7 @@ class StreamController extends AbstractController
         try {
             $this->oChatRoomService->closeRoom($iRoomId);
         } catch (Throwable $e) {
-            $this->logger->info('close Rtmps: error: ' . $e->getMessage());
+            $this->oLogger->info('close Rtmps: error: ' . $e->getMessage());
         }
 
     }
