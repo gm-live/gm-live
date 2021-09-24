@@ -34,4 +34,23 @@ class ChatRoomValidator extends AbstractValidator
         }
     }
 
+    public function openDataCheck($aParams)
+    {
+        $oValidator = $this->oValidate->make(
+            $aParams,
+            [
+                'room_id' => 'required|int',
+            ],
+            [
+                'room_id.required' => 'room_id 為必填.',
+                'room_id.int' => 'room_id 為數字.',
+            ]
+        );
+
+        if ($oValidator->fails()){
+            $sErrorMsg = $oValidator->errors()->first();  
+            throw new WorkException(Code::WEBSOCKET_DATA_FORMAT_ERROR, $sErrorMsg);
+        }
+    }
+
 }

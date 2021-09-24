@@ -41,11 +41,15 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
 
     public function onOpen($oServer, Request $oRequest): void
     {
-        $iFd = $oRequest->fd;
-        $sToken = $oRequest->header['token'];
-        $iRoomId = $oRequest->get['room_id']; 
 
         try {
+            
+            $iFd = $oRequest->fd;
+
+            $this->oChatRoomValidator->openDataCheck($oRequest->get);
+
+            $sToken = $oRequest->get['token'];
+            $iRoomId = $oRequest->get['room_id'] ?? null; 
             
             // 加入房間
             $this->oChatRoomService->joinRoom($sToken, $iFd, $iRoomId);

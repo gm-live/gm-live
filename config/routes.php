@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Hyperf\HttpServer\Router\Router;
 use App\Middleware\Api\UserAuthMiddleware;
+use App\Middleware\Websocket\UserAuthMiddleware as WebsocketUserAuthMiddleware;
 
 
 // 前台API
@@ -50,7 +51,7 @@ Router::addGroup('/streamer-api',function (){
 // websocket
 Router::get('/', 'App\Controller\Websocket\ChatRoomController', [
 	'middleware' => [
-		UserAuthMiddleware::class, 
+		WebsocketUserAuthMiddleware::class, 
 	],
 ]);
 

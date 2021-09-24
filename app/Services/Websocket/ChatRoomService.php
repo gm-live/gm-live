@@ -47,9 +47,10 @@ class ChatRoomService extends BaseWebsocketService
         $oUser = $this->getUserOrFailByFd($iFd);
 
         $sMsg = $oUser->username . ' leaved room!';
-        $aMsg = $this->makeMsg($iRoomId, $sMsg, $oUser);
         foreach ($aRoomIds as $iRoomId => $_) {
 
+            $aMsg = $this->makeMsg($iRoomId, $sMsg, $oUser);
+            
             // 離開房間
             $this->leaveRoomByFd($iFd, $oUser->id, $iRoomId);
 
