@@ -69,6 +69,7 @@ class BaseWebsocketService extends BaseService
             'msg_type' => $iMsgType,
             'user_id'  => $oUser->id ?? '',
             'username' => $oUser->username ?? '',
+            'avatar_url' => '', // TODO user 的聊天頭像
             'msg'      => $sMsg,
         ];
     }

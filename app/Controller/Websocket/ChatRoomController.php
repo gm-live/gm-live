@@ -16,10 +16,13 @@ use Throwable;
 use App\Validators\ChatRoomValidator;
 use App\Services\Api\UserService;
 use App\Constants\WebsocketConst as WsConst;
+use Hyperf\Logger\LoggerFactory;
 
 
 class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnCloseInterface
 {
+
+    protected $oLogger = null;
 
     /**
      * @Inject
@@ -38,6 +41,11 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
      * @var UserService
      */
     protected $oUserService;
+
+    public function __construct(LoggerFactory $oLoggerFactory)
+    {
+        $this->oLogger = $oLoggerFactory->get();
+    }
 
     public function onOpen($oServer, Request $oRequest): void
     {
@@ -68,6 +76,8 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
 
             $iFd = $oFrame->fd;
             $jData = $oFrame->data;
+
+            $this->oLogger->info("fd = $iFd, message = $jData");
 
             // 延長token時間
             $this->oUserService->addTokenExpireTimeByFd($iFd);
