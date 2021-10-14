@@ -19,6 +19,12 @@ class ChatRoomService extends BaseWebsocketService
      */
     protected $oConfigRepo;
 
+    public function destroyAllChatRoom()
+    {
+        $aAllRoomKeys = $this->getAllRoomKeys();
+        $this->oRedis->del($aAllRoomKeys);
+    }
+
     public function joinRoom($sToken, $iFd, $iRoomId)
     {
         $iUserId = $this->getUserIdByToken($sToken);

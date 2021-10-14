@@ -19,6 +19,26 @@ class BaseWebsocketService extends BaseService
      */
     protected $oUserRepo;
 
+    public function destroyAllFd()
+    {
+        $aAllFdRoomkeys = $this->getAllFdRoomkeys();
+        $sFdKey = $this->getFdUserMapKey();
+        $aAllFdRoomkeys[] = $sFdKey;
+        $this->oRedis->del($aAllFdRoomkeys);
+    }
+
+    public function getAllRoomKeys()
+    {
+        $sRoomPfx = $this->getRoomKey('');
+        return $this->oRedis->keys($sRoomPfx . '*');
+    }
+
+    public function getAllFdRoomkeys()
+    {
+        $sFdRoomPfx = $this->getFdRoomKey('');
+        return $this->oRedis->keys($sFdRoomPfx . '*');
+    }
+
     public function getRoomKey($iRoomId)
     {
         return sprintf(config('chatRoom.room_key'), $iRoomId);
