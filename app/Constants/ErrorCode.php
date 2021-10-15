@@ -64,6 +64,11 @@ class ErrorCode extends AbstractConstants
      */
     const CHAT_ROOM_NOT_EXISTS                  = 1008; 
 
+    /**
+     * @Message("禮物類型不存在禮物類型不存在")
+     */
+    const PRESENT_TYPE_NOT_EXISTS                = 1009; 
+
 
 
 

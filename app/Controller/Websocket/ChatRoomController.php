@@ -15,7 +15,7 @@ use App\Services\Websocket\ChatRoomService;
 use Throwable;
 use App\Validators\ChatRoomValidator;
 use App\Services\Api\UserService;
-use App\Constants\WebsocketConst as WsConst;
+use App\Constants\ChatRoomConst;
 use Hyperf\Logger\LoggerFactory;
 
 
@@ -94,7 +94,7 @@ class ChatRoomController implements OnMessageInterface, OnOpenInterface, OnClose
                     $iRoomId,
                     $e->getMessage(), 
                     null,
-                    WsConst::MSG_TYPE_SYSTEM, 
+                    ChatRoomConst::MSG_TYPE_SYSTEM, 
                     $e->getCode()
                 );
                 $oServer->push((int)$iFd, json_encode($aMsgData, JSON_UNESCAPED_UNICODE));

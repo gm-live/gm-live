@@ -8,6 +8,7 @@ use Hyperf\Di\Annotation\Inject;
 use App\Repositories\UserRepo;
 use Hyperf\Server\ServerFactory;
 use App\Constants\WebsocketConst as WsConst;
+use App\Constants\ChatRoomConst;
 use App\Exception\WorkException;
 use App\Constants\ErrorCode as Code;
 
@@ -80,10 +81,11 @@ class BaseWebsocketService extends BaseService
         $iRoomId,
         $sMsg = '',
         $oUser = null,
-        $iMsgType = WsConst::MSG_TYPE_NORMAL,
-        $iStatus = WsConst::WEBSOCKET_STATUS_OK
+        $iMsgType = ChatRoomConst::MSG_TYPE_NORMAL,
+        $iStatus = WsConst::WEBSOCKET_STATUS_OK,
+        $aExtraData = []
     ) {
-        return [
+        return array_merge([
             'status'   => $iStatus,
             'room_id'  => $iRoomId,
             'msg_type' => $iMsgType,
@@ -91,7 +93,7 @@ class BaseWebsocketService extends BaseService
             'username' => $oUser->username ?? '',
             'avatar_url' => '', // TODO user 的聊天頭像
             'msg'      => $sMsg,
-        ];
+        ], $aExtraData);
     }
 
     public function getRoomIdsByFd($iFd)

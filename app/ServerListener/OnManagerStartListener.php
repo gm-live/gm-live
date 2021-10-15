@@ -15,10 +15,10 @@ class OnManagerStartListener
      */
     protected $oChatRoomService;
 
-    public function listen()
+    public function handle()
     {
-        $this->oChatRoomService->destroyAllChatRoom( );
-        $this->oChatRoomService->destroyAllFd();
+        // $this->oChatRoomService->destroyAllChatRoom();
+        // $this->oChatRoomService->destroyAllFd();
     }
     
 }

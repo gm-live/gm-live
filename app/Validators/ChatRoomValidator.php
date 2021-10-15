@@ -17,6 +17,7 @@ class ChatRoomValidator extends AbstractValidator
             [
                 'room_id' => 'required|int',
                 'msg_type' => 'required|int',
+                'present_type' => 'int',
                 'msg' => 'required|string',
             ],
             [
@@ -24,6 +25,7 @@ class ChatRoomValidator extends AbstractValidator
                 'room_id.int' => 'room_id 為數字.',
                 'msg_type.required' => 'msg_type 為必填.',
                 'msg_type.int' => 'msg_type 為數字.',
+                'present_type.int' => 'present_type 為數字.',
                 'msg.required' => 'msg 為必填.',
             ]
         );

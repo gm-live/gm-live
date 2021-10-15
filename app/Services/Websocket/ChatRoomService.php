@@ -9,6 +9,8 @@ use Hyperf\Redis\Redis;
 use App\Exception\WorkException;
 use App\Constants\ErrorCode as Code;
 use App\Repositories\ConfigRepo;
+use App\Constants\ChatRoomConst;
+use App\Constants\WebsocketConst as WsConst;
 
 class ChatRoomService extends BaseWebsocketService
 {
@@ -103,18 +105,48 @@ class ChatRoomService extends BaseWebsocketService
     }
 
 
-    public function handleMsg($iFd, $aData)
+    public function handleMsg($iFd, $aMsgData)
     {
-        $iRoomId  = $aData['room_id'];
-        $iMsgType = $aData['msg_type'];
-        $sMsg     = $aData['msg'];
+        $iRoomId  = $aMsgData['room_id'];
+        $iMsgType = $aMsgData['msg_type'];
+        $sMsg     = $aMsgData['msg'];
         $oUser    = $this->getUserOrFailByFd($iFd);
 
         // TODO 持久化
         
+
+        $aExtraData = match($iMsgType) {
+            ChatRoomConst::MSG_TYPE_PRESENT => $this->presentHandle($aMsgData),
+            default => [],
+        };
+
+
         // 推送
-        $aMsg = $this->makeMsg($iRoomId, $sMsg, $oUser);
-        $this->pushAllMsgByRoomId($iRoomId, $aMsg);
+        $aSendMsg = $this->makeMsg(
+            $iRoomId, 
+            $sMsg, 
+            $oUser, 
+            $iMsgType,
+            WsConst::WEBSOCKET_STATUS_OK,
+            $aExtraData
+        );
+
+        $this->pushAllMsgByRoomId($iRoomId, $aSendMsg);
+    }
+
+    public function presentHandle($aMsgData): array
+    {
+        $iPresentType = $aMsgData['present_type'] ?? null;
+        if (! in_array($iPresentType, ChatRoomConst::ALL_PRESENTS)) {
+            throw new WorkException(Code::PRESENT_TYPE_NOT_EXISTS);
+        }
+
+        // TODO 錢包扣款
+        
+
+        return [
+            'present_type' => $iPresentType,
+        ];
     }
 
     public function pushLastMsgs($iFd, $iRoomId)
