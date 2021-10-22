@@ -73,7 +73,9 @@ class BaseWebsocketService extends BaseService
         $aRoomAllFds = $this->getAllFdByRoomId($iRoomId);
         $oServer     = server();
         foreach ($aRoomAllFds as $iUserId => $iFd) {
-            $oServer->push((int) $iFd, json_encode($aMsgData));
+            if ($oServer->isEstablished((int)$iFd)) {
+                $oServer->push((int) $iFd, json_encode($aMsgData));
+            }
         }
     }
 
